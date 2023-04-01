@@ -52,16 +52,22 @@ Examples:
 
 # How to configure XXX to use a socks5 proxy server
 
-## Git
+### Git
 
 ```
 git config --global http.proxy socks5h://<socks5-ip>:<socks5-port>
 ```
 
-## Curl
+### Curl
 
 ```
 curl --proxy socks5h://<socks5-ip>:<socks5-port> https://www.google.com
+```
+
+### Ncat
+
+```
+ncat --proxy <socks5-ip>:<socks5-port> --proxy-type socks5 --proxy-dns=remote <hostname> <port>
 ```
 
 # TODO
