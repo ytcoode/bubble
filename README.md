@@ -63,3 +63,9 @@ git config --global http.proxy socks5h://<socks5-ip>:<socks5-port>
 ```
 curl --proxy socks5h://<socks5-ip>:<socks5-port> https://www.google.com
 ```
+
+# TODO
+
+- Implement the HTTP protocol
+
+- Implement the HTTPS protocol
