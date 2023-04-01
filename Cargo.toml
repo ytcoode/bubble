@@ -1,0 +1,14 @@
+[package]
+name = "bubble"
+version = "0.1.0"
+authors = ["Yuntao Wang <ytcoode@gmail.com>"]
+edition = "2021"
+description = "A Rust-based versatile proxy server that supports SOCKS5, HTTP, and HTTPS protocols, providing fast, efficient, and secure Internet access."
+
+[dependencies]
+anstyle = "0.3.5"
+anyhow = "1.0.70"
+clap = { version = "4.1.14", features = ["derive"] }
+env_logger = "0.10.0"
+log = "0.4.17"
+tokio = { version = "1.26.0", features = ["full"] }
