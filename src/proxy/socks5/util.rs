@@ -1,5 +1,5 @@
-use log::error;
 use tokio::net::TcpStream;
+use tracing::error;
 
 pub fn tcp_stream_addrs(s: &TcpStream, client: bool) -> String {
     let local_addr = match s.local_addr() {

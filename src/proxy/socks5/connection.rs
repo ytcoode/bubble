@@ -2,11 +2,11 @@ use std::net::SocketAddr;
 
 use anyhow::{anyhow, bail, ensure, Context};
 
-use log::{debug, info, warn};
 use tokio::{
     io::{self, AsyncReadExt, AsyncWriteExt},
     net::{self, TcpSocket, TcpStream},
 };
+use tracing::{debug, info, warn};
 
 use super::util;
 

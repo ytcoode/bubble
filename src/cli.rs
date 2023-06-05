@@ -1,10 +1,10 @@
 use clap::Parser;
-use log::debug;
+use tracing::debug;
 
-mod util;
+mod help;
 
 #[derive(Parser, Debug)]
-#[command(version, about, before_help = util::before_help(), after_help = util::after_help())]
+#[command(version, about, before_help = help::BEFORE, after_help = help::AFTER)]
 pub struct Cli {
     #[command(flatten)]
     pub proxy: Proxy,
@@ -13,7 +13,7 @@ pub struct Cli {
 }
 
 #[derive(clap::Args, Debug)]
-#[group(required = true, args(["socks5", "http", "https"]))]
+#[group(required = true, args = ["socks5", "http", "https"])]
 pub struct Proxy {
     #[command(flatten)]
     pub socks5: Socks5,
@@ -47,7 +47,7 @@ pub struct Http {
     pub enabled: bool,
 
     /// Specify the IP address for the http proxy server to listen on
-    #[arg(id = "http-id", long, value_name = "IP", default_value = "0.0.0.0")]
+    #[arg(id = "http-ip", long, value_name = "IP", default_value = "0.0.0.0")]
     pub ip: String,
 
     /// Specify the port number for the http proxy server to listen on
@@ -62,7 +62,7 @@ pub struct Https {
     pub enabled: bool,
 
     /// Specify the IP address for the https proxy server to listen on
-    #[arg(id = "https-id", long, value_name = "IP", default_value = "0.0.0.0")]
+    #[arg(id = "https-ip", long, value_name = "IP", default_value = "0.0.0.0")]
     pub ip: String,
 
     /// Specify the port number for the https proxy server to listen on
@@ -82,7 +82,7 @@ pub struct Auth {
 }
 
 pub fn parse() -> Cli {
-    let r = Cli::parse();
-    debug!("{:#?}", r);
-    r
+    let cli = Cli::parse();
+    debug!("{:#?}", cli);
+    cli
 }

@@ -2,11 +2,12 @@ use std::net::IpAddr;
 use tokio::signal;
 
 mod cli;
+mod init;
 mod proxy;
 
 #[tokio::main]
 async fn main() {
-    env_logger::init();
+    init::init();
 
     let cli = cli::parse();
 

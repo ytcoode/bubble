@@ -1,7 +1,7 @@
 use std::net::SocketAddr;
 
-use log::error;
 use tokio::net::TcpSocket;
+use tracing::error;
 
 mod connection;
 mod util;
