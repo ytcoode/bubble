@@ -1,6 +1,6 @@
-use std::net::SocketAddr;
+use std::{net::SocketAddr, time::Duration};
 
-use tokio::net::TcpSocket;
+use tokio::{net::TcpSocket, time};
 use tracing::error;
 
 mod connection;
@@ -26,7 +26,10 @@ where
 
     loop {
         match listener.accept().await {
-            Err(e) => error!("listener.accept: {:?}", e),
+            Err(e) => {
+                error!("listener.accept: {:?}", e);
+                time::sleep(Duration::from_secs(1)).await;
+            }
             Ok((socket, _)) => {
                 tokio::spawn(connection::process(socket));
             }

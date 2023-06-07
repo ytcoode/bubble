@@ -13,16 +13,13 @@ pub struct Cli {
 }
 
 #[derive(clap::Args, Debug)]
-#[group(required = true, args = ["socks5", "http", "https"])]
+#[group(required = true, args = ["socks5", "http"])]
 pub struct Proxy {
     #[command(flatten)]
     pub socks5: Socks5,
 
     #[command(flatten)]
     pub http: Http,
-
-    #[command(flatten)]
-    pub https: Https,
 }
 
 #[derive(clap::Args, Debug)]
@@ -52,21 +49,6 @@ pub struct Http {
 
     /// Specify the port number for the http proxy server to listen on
     #[arg(id = "http-port", long, value_name = "PORT", default_value_t = 1081)]
-    pub port: u16,
-}
-
-#[derive(clap::Args, Debug)]
-pub struct Https {
-    /// Start the https proxy server on the <https-ip>:<https-port> address
-    #[arg(id = "https", long)]
-    pub enabled: bool,
-
-    /// Specify the IP address for the https proxy server to listen on
-    #[arg(id = "https-ip", long, value_name = "IP", default_value = "0.0.0.0")]
-    pub ip: String,
-
-    /// Specify the port number for the https proxy server to listen on
-    #[arg(id = "https-port", long, value_name = "PORT", default_value_t = 1082)]
     pub port: u16,
 }
 

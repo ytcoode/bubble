@@ -25,12 +25,5 @@ async fn main() {
         )));
     }
 
-    if cli.proxy.https.enabled {
-        tokio::spawn(proxy::https::start((
-            cli.proxy.https.ip.parse::<IpAddr>().expect("https-ip"),
-            cli.proxy.https.port,
-        )));
-    }
-
     signal::ctrl_c().await.expect("signal::ctrl_c");
 }

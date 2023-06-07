@@ -8,9 +8,12 @@ license = "MIT"
 
 [dependencies]
 anyhow = "1.0.70"
+bytes = "1.4.0"
 clap = { version = "4.1.14", features = ["derive"] }
-tokio = { version = "1.26.0", features = ["full"] }
-hyper = { git = "https://github.com/hyperium/hyper.git", features = ["full"] }
 color-print = "0.3.4"
+http = "0.2.9"
+http-body-util = "0.1.0-rc.2"
+hyper = { git = "https://github.com/hyperium/hyper.git", features = ["full"] }
+tokio = { version = "1.26.0", features = ["full"] }
 tracing = { git = "https://github.com/tokio-rs/tracing.git" }
 tracing-subscriber = { git = "https://github.com/tokio-rs/tracing.git", features = ["env-filter"] }
