@@ -9,8 +9,8 @@ pub fn init() {
     tracing_subscriber::registry()
         .with(
             fmt::subscriber()
-                .with_target(false)
-                .with_file(true)
+                // .with_target(false)
+                // .with_file(true)
                 .with_line_number(true)
                 .log_internal_errors(true),
         )

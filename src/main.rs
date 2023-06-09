@@ -19,9 +19,19 @@ async fn main() {
     }
 
     if cli.proxy.http.enabled {
-        tokio::spawn(proxy::http::start((
-            cli.proxy.http.ip.parse::<IpAddr>().expect("http-ip"),
-            cli.proxy.http.port,
+        tokio::spawn(proxy::http::start(
+            (
+                cli.proxy.http.ip.parse::<IpAddr>().expect("http-ip"),
+                cli.proxy.http.port,
+            ),
+            cli.proxy.http.tunnel_addr,
+        ));
+    }
+
+    if cli.proxy.tunnel.enabled {
+        tokio::spawn(proxy::tunnel::start((
+            cli.proxy.tunnel.ip.parse::<IpAddr>().expect("tunnel-ip"),
+            cli.proxy.tunnel.port,
         )));
     }
 

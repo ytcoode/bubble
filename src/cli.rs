@@ -1,3 +1,5 @@
+use std::net::SocketAddr;
+
 use clap::Parser;
 use tracing::debug;
 
@@ -13,13 +15,16 @@ pub struct Cli {
 }
 
 #[derive(clap::Args, Debug)]
-#[group(required = true, args = ["socks5", "http"])]
+#[group(required = true, args = ["socks5", "http", "tunnel"])]
 pub struct Proxy {
     #[command(flatten)]
     pub socks5: Socks5,
 
     #[command(flatten)]
     pub http: Http,
+
+    #[command(flatten)]
+    pub tunnel: Tunnel,
 }
 
 #[derive(clap::Args, Debug)]
@@ -49,6 +54,30 @@ pub struct Http {
 
     /// Specify the port number for the http proxy server to listen on
     #[arg(id = "http-port", long, value_name = "PORT", default_value_t = 1081)]
+    pub port: u16,
+
+    /// Specify the tunnel address for the http proxy server to forward requests to
+    #[arg(
+        id = "http-tunnel-addr",
+        long,
+        value_name = "ADDR",
+        default_value = "127.0.0.1:1082"
+    )]
+    pub tunnel_addr: SocketAddr,
+}
+
+#[derive(clap::Args, Debug)]
+pub struct Tunnel {
+    /// Start the tunnel server on the <tunnel-ip>:<tunnel-port> address
+    #[arg(id = "tunnel", long)]
+    pub enabled: bool,
+
+    /// Specify the IP address for the tunnel server to listen on
+    #[arg(id = "tunnel-ip", long, value_name = "IP", default_value = "0.0.0.0")]
+    pub ip: String,
+
+    /// Specify the port number for the tunnel server to listen on
+    #[arg(id = "tunnel-port", long, value_name = "PORT", default_value_t = 1082)]
     pub port: u16,
 }
 

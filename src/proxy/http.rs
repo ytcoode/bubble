@@ -6,13 +6,14 @@ use hyper::service::service_fn;
 use hyper::upgrade::Upgraded;
 use hyper::{body, client, server};
 use hyper::{Method, Request, Response};
+use tokio::io::AsyncWriteExt;
 use tokio::{
     net::{TcpListener, TcpStream},
     time,
 };
 use tracing::{debug, error};
 
-pub async fn start<A>(addr: A)
+pub async fn start<A>(addr: A, tunnel_addr: SocketAddr)
 where
     A: Into<SocketAddr>,
 {
@@ -27,13 +28,13 @@ where
                 time::sleep(Duration::from_secs(1)).await;
             }
             Ok((s, _)) => {
-                tokio::spawn(handle_socket(s));
+                tokio::spawn(handle_socket(s, tunnel_addr));
             }
         }
     }
 }
 
-async fn handle_socket(s: TcpStream) {
+async fn handle_socket(s: TcpStream, tunnel_addr: SocketAddr) {
     if let Err(err) = server::conn::http1::Builder::new()
         .preserve_header_case(true)
         .title_case_headers(true)
@@ -109,7 +110,10 @@ fn full<T: Into<Bytes>>(chunk: T) -> BoxBody<Bytes, hyper::Error> {
 }
 
 async fn tunnel(mut upgraded: Upgraded, addr: String) -> std::io::Result<()> {
-    let mut server = TcpStream::connect(addr).await?;
+    let mut server = TcpStream::connect("qingse.dev:1082").await?;
+
+    server.write_u16(addr.len() as u16).await?;
+    server.write_all(addr.as_bytes()).await?;
 
     tokio::io::copy_bidirectional(&mut upgraded, &mut server).await?;
 
