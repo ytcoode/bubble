@@ -1,4 +1,4 @@
-use std::net::SocketAddr;
+
 
 use clap::Parser;
 use tracing::debug;
@@ -56,14 +56,9 @@ pub struct Http {
     #[arg(id = "http-port", long, value_name = "PORT", default_value_t = 1081)]
     pub port: u16,
 
-    /// Specify the tunnel address for the http proxy server to forward requests to
-    #[arg(
-        id = "http-tunnel-addr",
-        long,
-        value_name = "ADDR",
-        default_value = "127.0.0.1:1082"
-    )]
-    pub tunnel_addr: SocketAddr,
+    /// Specify the tunnel server address for the http proxy server to forward requests to
+    #[arg(id = "http-tunnel-addr", long, value_name = "ADDR")]
+    pub tunnel_addr: Option<String>,
 }
 
 #[derive(clap::Args, Debug)]

@@ -30,7 +30,7 @@ where
     }
 }
 
-#[instrument(skip_all, fields(
+#[instrument(skip(s), fields(
     peer_addr = %s.peer_addr().unwrap(),
     local_addr = %s.local_addr().unwrap()
 ))]

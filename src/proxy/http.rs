@@ -13,7 +13,7 @@ use tokio::{
 };
 use tracing::{debug, error};
 
-pub async fn start<A>(addr: A, tunnel_addr: SocketAddr)
+pub async fn start<A>(addr: A, tunnel_addr: Option<String>)
 where
     A: Into<SocketAddr>,
 {
@@ -28,17 +28,22 @@ where
                 time::sleep(Duration::from_secs(1)).await;
             }
             Ok((s, _)) => {
-                tokio::spawn(handle_socket(s, tunnel_addr));
+                tokio::spawn(handle_socket(s, tunnel_addr.clone()));
             }
         }
     }
 }
 
-async fn handle_socket(s: TcpStream, tunnel_addr: SocketAddr) {
+async fn handle_socket(s: TcpStream, tunnel_addr: Option<String>) {
     if let Err(err) = server::conn::http1::Builder::new()
         .preserve_header_case(true)
         .title_case_headers(true)
-        .serve_connection(s, service_fn(proxy))
+        .serve_connection(
+            s,
+            service_fn(|req: Request<body::Incoming>| async {
+                proxy(req, tunnel_addr.clone()).await
+            }),
+        )
         .with_upgrades()
         .await
     {
@@ -48,6 +53,7 @@ async fn handle_socket(s: TcpStream, tunnel_addr: SocketAddr) {
 
 async fn proxy(
     req: Request<body::Incoming>,
+    tunnel_addr: Option<String>,
 ) -> Result<Response<BoxBody<Bytes, hyper::Error>>, hyper::Error> {
     debug!("req: {:?}", req);
 
@@ -64,7 +70,7 @@ async fn proxy(
                 tokio::task::spawn(async move {
                     match hyper::upgrade::on(req).await {
                         Ok(upgraded) => {
-                            if let Err(e) = tunnel(upgraded, addr).await {
+                            if let Err(e) = tunnel(upgraded, addr, tunnel_addr).await {
                                 error!("tunnel error: {}", e);
                             };
                         }
@@ -109,11 +115,20 @@ fn full<T: Into<Bytes>>(chunk: T) -> BoxBody<Bytes, hyper::Error> {
         .boxed()
 }
 
-async fn tunnel(mut upgraded: Upgraded, addr: String) -> std::io::Result<()> {
-    let mut server = TcpStream::connect("qingse.dev:1082").await?;
-
-    server.write_u16(addr.len() as u16).await?;
-    server.write_all(addr.as_bytes()).await?;
+async fn tunnel(
+    mut upgraded: Upgraded,
+    addr: String,
+    tunnel_addr: Option<String>,
+) -> std::io::Result<()> {
+    let mut server = match tunnel_addr {
+        Some(a) => {
+            let mut s = TcpStream::connect(a).await?;
+            s.write_u16(addr.len() as u16).await?;
+            s.write_all(addr.as_bytes()).await?;
+            s
+        }
+        None => TcpStream::connect(addr).await?,
+    };
 
     tokio::io::copy_bidirectional(&mut upgraded, &mut server).await?;
 
