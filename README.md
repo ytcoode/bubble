@@ -69,9 +69,3 @@ curl --proxy socks5h://<socks5-ip>:<socks5-port> https://www.google.com
 ```
 ncat --proxy <socks5-ip>:<socks5-port> --proxy-type socks5 --proxy-dns=remote <hostname> <port>
 ```
-
-# TODO
-
-- Implement the HTTP protocol
-
-- Implement the HTTPS protocol
